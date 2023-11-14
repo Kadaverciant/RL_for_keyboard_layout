@@ -1,2 +1,10 @@
-# RL_for_keyboard_layout
-Generation of the optimal keyboard layout for programmers and writers using RL methods.
+# Keyboard generation using RL
+
+## Team
+
+- Vsevolod Klyushev / v.klyushev@innopolis.university
+- Dmitry Beresnev / d.beresnev@innopolis.university
+
+## Quick start
+
+`pipenv shell` or `pip install -r requirements.txt`
