@@ -9,6 +9,8 @@ ruff = "*"
 numpy = "*"
 tqdm = "*"
 pandas = "*"
+argparse = "*"
+torch = "*"
 
 [dev-packages]
 
