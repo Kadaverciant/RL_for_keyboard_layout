@@ -117,12 +117,15 @@ def preprocess_text(text: str, max_length: int, padding_value: int) -> list[int]
     return encoded_text + [padding_value for _ in range(max_length - len(encoded_text))]
 
 
-def encode_dataset(data: pd.DataFrame, max_length: int, save_path: str, logger: Logger):
+def encode_dataset(
+    data: pd.DataFrame, max_length: int, limit: int, save_path: str, logger: Logger
+):
     """Encode raw dataset
 
     Args:
         data (pd.DataFrame): raw programs dataset
         max_length (int): max length of text
+        limit (int): max dataset size
         save_path (str): path to save encoded dataset
         logger (Logger): logger instance
 
@@ -130,7 +133,7 @@ def encode_dataset(data: pd.DataFrame, max_length: int, save_path: str, logger: 
 
     padding_value: int = ENCODE_DICT["<space>"]
 
-    encoded_df = data.copy()
+    encoded_df = data.head(limit).copy()
 
     logger.log("Preprocessing data...")
     encoded_df["encoded_text"] = encoded_df["text"].apply(
@@ -177,6 +180,14 @@ def make_dataset():
         help="max length of program in final dataset",
     )
     parser.add_argument(
+        "-l",
+        "--limit",
+        type=int,
+        dest="limit",
+        default=1000,
+        help="limit pf preprocessed dataset",
+    )
+    parser.add_argument(
         "-v",
         "--verbose",
         default=True,
@@ -184,10 +195,11 @@ def make_dataset():
         help="print information (default: True)",
     )
     namespace = parser.parse_args()
-    interim_path, raw_path, max_length, verbose = (
+    interim_path, raw_path, max_length, limit, verbose = (
         namespace.interim,
         namespace.raw,
         namespace.max_length,
+        namespace.limit,
         namespace.verbose,
     )
     verbose: bool = bool(verbose)
@@ -207,7 +219,11 @@ def make_dataset():
 
     # Preprocess dataset - Encoding
     encode_dataset(
-        programs_df, max_length, os.path.join(raw_path, "encoded_programs.csv"), logger
+        programs_df,
+        max_length,
+        limit,
+        os.path.join(raw_path, "encoded_programs.csv"),
+        logger,
     )
 
     logger.log("Done!")
