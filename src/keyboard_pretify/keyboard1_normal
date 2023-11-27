@@ -1,0 +1,5 @@
+["~\n`", "!\n1", "@\n2", "Space\nB", "$\n4", "%\n5", "^\nCtrl", ">\n7", "*\n8", "I\n9", "A\n0", "Alt\n3", "+\n=", {w:2},"BackSpace\nO"],
+[{w:1.5},"Tab\nS", "-\nq", "R\nw", "E\ne", "W\nr", "T\nG", "Y\nZ", "Enter\nu", "(\ni", "Shift\no", "P\np", "{\n[", "}\n]", {w:1.5},"|\n\\"],
+[{w:1.75},"CapsLock\nN", ")\na", "Tab\ns", "D\nd", "F\n6", "Space\ng", "&\nh", "J\nV", "K\nk", "L\nl", ":\n;", "'\n", {w:1.25},"Enter\nU", {w:1},"Space\nEnter"],
+[{w:1.5},"Ctrl\nShift", "Shift\nShift", "y\nz", "X\nx", "t\nc", "j\nM", "Q\nb", "Caps\nn", "v\nm", "<\n,", "H\n.", "?\n/", {w:1.25},"Back\nShift", {w:1.25},"Shift\nShift"],
+[{w:1.25},"Ctrl\nShift", {w:1.25}, "Alt\nAlt", {w:1.25},"C\nSpace", "f\nSpace", {a:1,w:4.25}, "Space\n Enter", {w:2}, "Space\nSpace", {w:2}, "Alt\n_", {w:2}, "#\nCtrl"]

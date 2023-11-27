@@ -1,0 +1,7 @@
+
+
+["~\n`","*\n1","Space\n2","#\n3","$\nY","%\n5","^\n6","&\nQ","Back\n8","(\n9",")\n0","_\n-","+\n=",{w:2},"BackSpace\n!"],
+[{w:1.5},"Tab\n<","7\nq","W\nw","E\ne","R\nr",":\nt","4\ny","U\nu","I\ni","O\no","P\nj","{\n[","}\n]",{w:1.5},"|\n\\"],
+[{a:7,w:1.75},"CapsLock",{a:5},"A\na","l\ns","D\nShift",",\nf","G\ng","V\nh","J\nEnter","Space\nT","L\nS","k\n;","Space\n\"","K\nEnter",{w:1.25},"Space\nEnter"],
+[{w:1.5},"d\nShift","Shift\nB","Z\nz","X\nx","C\nc","H\nv","Shift\nb","N\nn","M\nm","Tab\nF",">\n.","?\n/",{a:7,w:2.5},"Shift"],
+[{a:5,w:1.25},"Ctrl\nCtrl",{w:1.25},"Alt\nAlt",{w:6},"Space\nSpace","Space\n\"","p\nSpace","Space\nEnter","Space\n@",{a:7,w:1.25},"Alt",{w:1.25},"Ctrl"]

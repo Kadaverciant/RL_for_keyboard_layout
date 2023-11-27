@@ -1,0 +1,5 @@
+["~\n`", "!\n1", "@\n2", "Space\nB", "$\n4", "%\n5", "^\nCtrl", ">\n7", "*\n8", "I\n9", "A\n0", "Alt\n3", "+\n=", "BackSpace\nO"]
+["Tab\nS", "-\nq", "R\nw", "E\ne", "W\nr", "T\nG", "Y\nZ", "Enter\nu", "(\ni", "Shift\no", "P\np", "{\n[", "}\n]", "|\n\\"]
+["CapsLock\nN", ")\na", "Tab\ns", "D\nd", "F\n6", "Space\ng", "&\nh", "J\nV", "K\nk", "L\nl", ":\n;", ""\n\"", "Enter\nU", "Space\nEnter"]
+["Ctrl\nShift", "Shift\nShift", "y\nz", "X\nx", "t\nc", "j\nM", "Q\nb", "CapsLock\nn", "v\nm", "<\n,", "H\n.", "?\n/", "BackSpace\nShift", "Shift\nShift"]
+["Ctrl\nShift", "Alt\nAlt", "C\nSpace", "f\nSpace", "Space\nSpace", "Space\nSpace", "Space\nEnter", "Space\nSpace", "Space\nSpace", "Alt\n_", "#\nCtrl"]
