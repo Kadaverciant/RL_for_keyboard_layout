@@ -153,6 +153,8 @@ def save_scores_plot(
     plt.grid()
     plt.ylabel("Score")
     plt.xlabel("Random layout #")
+    plt.xlim([0, len(scores) - 1])
+    plt.xticks(points)
     plt.title("Scores for random layouts")
     plt.savefig(save_path)
     plt.close()
