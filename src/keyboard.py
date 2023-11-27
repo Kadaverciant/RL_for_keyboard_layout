@@ -149,7 +149,29 @@ def encode_decode_buttons(buttons: set[str]) -> tuple[dict[str, int], dict[int, 
 
 BUTTONS_SET = get_buttons_set(QWERTY_LOW_LAYOUT, QWERTY_HIGH_LAYOUT)
 KEYBOARD_LAYOUT_SHAPE = get_keyboard_shape(QWERTY_LOW_LAYOUT)
+KEYBOARD_LAYOUT_CUMSUM_SHAPE = np.cumsum(KEYBOARD_LAYOUT_SHAPE)
 KEYS_NUMBER = sum(KEYBOARD_LAYOUT_SHAPE) * 2
+
+
+def convert_int_to_coords(n: int) -> tuple[int, int, int]:
+    shift = 0
+    row = 0
+    column = 0
+    if n >= KEYS_NUMBER:
+        return 2, 0, 0
+    if n < 0:
+        return 2, 0, 0
+    if n >= KEYS_NUMBER // 2:
+        n -= KEYS_NUMBER // 2
+        shift = 1
+    for i in range(len(KEYBOARD_LAYOUT_CUMSUM_SHAPE)):
+        if n < KEYBOARD_LAYOUT_CUMSUM_SHAPE[i]:
+            row = i
+            break
+    if row > 0:
+        n -= KEYBOARD_LAYOUT_CUMSUM_SHAPE[row - 1]
+    column = n
+    return shift, row, column
 
 
 ENCODE_DICT, DECODE_DICT = encode_decode_buttons(BUTTONS_SET)
@@ -188,6 +210,22 @@ def get_all_buttons_encoded(high_layout: Layout, low_layout: Layout) -> list[int
 
 
 ALL_BUTTONS_ENCODED = get_all_buttons_encoded(QWERTY_ENCODED_HIGH, QWERTY_ENCODED_LOW)
+
+
+def get_encode_dicts() -> tuple[dict[tuple[int, int], int], dict[int, tuple[int, int]]]:
+    pair_to_id = {}
+    id_to_pair = {}
+    counter = 0
+    for i in range(134):
+        for j in range(i + 1, 134):
+            pair_to_id[(i, j)] = counter
+            id_to_pair[counter] = (i, j)
+            counter += 1
+    return pair_to_id, id_to_pair
+
+
+PAIR_TO_ID, ID_TO_PAIR = get_encode_dicts()
+ACTION_SPACE_SIZE = len(PAIR_TO_ID)
 
 
 Position = tuple[int, int]
@@ -373,7 +411,7 @@ class KeyboardLayout:
     ) -> tuple[tuple[int, Position], tuple[int, Position], float]:
         shift_positions = self.low_layout_dict[SHIFT_CODE]
         if len(shift_positions) == 0:
-            print("ERROR SHIFT IS UNREACHABLE")
+            # print("ERROR SHIFT IS UNREACHABLE")
             return (0, (0, 0)), (0, (0, 0)), 9999
 
         # firstly reach SHIFT, then - positions
