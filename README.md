@@ -53,6 +53,7 @@ We also highly recommend to read reports in corresponding `reports` folder to fu
 │   └── Baseline.ipynb
 │
 ├── reports                 # Generated analysis as HTML, PDF, LaTeX, etc.
+│   ├── Presentation.pdf
 │   └── Report.pdf           # Main assignment report
 │
 ├── requirements.txt  # The requirements file for reproducing the analysis environment
