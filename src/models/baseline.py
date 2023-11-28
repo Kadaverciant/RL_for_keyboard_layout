@@ -1,4 +1,4 @@
-""" Module contains functions for obtaining dataset """
+""" Module contains functions for generating baseline results """
 
 import argparse
 import os
@@ -47,14 +47,23 @@ class Logger:
             print(message)
 
 
-""" Collect data functions """
+""" Read data functions """
 
 
-def read_data(path: str, limit: int, logger: Logger):
+def read_data(path: str, limit: int, logger: Logger) -> np.ndarray:
+    """Read data from disk
+
+    Args:
+        path (str): path to read data
+        limit (int): limit data points
+        logger (Logger): logger instance
+
+    Returns:
+        np.ndarray: encoded program data
+    """
     logger.log(f"Reading data '{path}'...")
     data_points = pd.read_csv(path, index_col=0)
 
-    # Remove all data from folder
     dataset = np.array(
         [
             np.array(text)
@@ -75,6 +84,16 @@ def generate_random_layout(
     keyboard_shape: tuple[int, ...],
     seed: Optional[int] = None,
 ) -> tuple[Layout, Layout]:
+    """Generate random keyboard layout
+
+    Args:
+        all_buttons_encoded (list[int]): ordered list of encoded buttons
+        keyboard_shape (tuple[int, ...]): keyboard layout shape
+        seed (Optional[int]): random seed. Default to None
+
+    Returns:
+        tuple[Layout, Layout]: low layout and high layout
+    """
     if seed is not None:
         random.seed(seed)
 
@@ -103,11 +122,20 @@ def generate_layouts(
     layouts_number: int,
     logger: Logger,
 ) -> list[KeyboardLayout]:
+    """Generate random keyboard layouts
+
+    Args:
+        layouts_number (int): number of layouts to generate
+        logger (Logger): logger instance
+
+    Returns:
+        list[KeyboardLayout]: list of random keyboard layouts
+    """
     layouts = []
     loop = range(layouts_number)
     if logger.verbose:
         loop = tqdm(loop)
-        loop.set_description(desc="Generating layouts")
+        loop.set_description(desc="Generating random layouts")
 
     for i in loop:
         random_low, random_high = generate_random_layout(
@@ -121,6 +149,16 @@ def generate_layouts(
 def estimate_layouts(
     layouts: list[KeyboardLayout], dataset: np.ndarray, logger: Logger
 ) -> torch.Tensor:
+    """Estimate keyboard layouts
+
+    Args:
+        layouts (list[KeyboardLayout]): layouts to estimate
+        dataset (np.ndarray): data on which layouts should be estimated
+        logger (Logger): logger instance
+
+    Returns:
+        torch.Tensor: total scores of layouts
+    """
     loop = dataset
     if logger.verbose:
         loop = tqdm(loop)
@@ -141,8 +179,17 @@ def save_scores_plot(
     logger: Logger,
     figsize: tuple[int, int] = (16, 9),
 ):
-    logger.log("Saving figure...")
+    """Save figure of layout scores
 
+    Args:
+        scores (torch.Tensor): layout scores
+        qwerty_score (float): QWERTY layout score
+        save_path (str): path to save figure
+        logger (Logger): logger instance
+        figsize (tuple[int, int]): resulting figure sizes. Default to (16, 9)
+    """
+
+    logger.log(f"Saving figure '{save_path}'...")
     qwerty_scores = [qwerty_score for _ in range(len(scores))]
     random_scores = [x.item() for x in scores]
     plt.subplots(1, 1, figsize=figsize)

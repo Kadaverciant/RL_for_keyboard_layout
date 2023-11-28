@@ -52,14 +52,24 @@ class Logger:
             print(message)
 
 
-""" Collect data functions """
+""" Read data functions """
 
 
 def read_data(path: str, limit: int, logger: Logger):
+    """Read data from disk
+
+    Args:
+        path (str): path to read data
+        limit (int): limit data points
+        logger (Logger): logger instance
+
+    Returns:
+        np.ndarray: encoded program data
+    """
+
     logger.log(f"Reading data '{path}'...")
     data_points = pd.read_csv(path, index_col=0)
 
-    # Remove all data from folder
     dataset = np.array(
         [
             np.array(text)
@@ -73,23 +83,45 @@ def read_data(path: str, limit: int, logger: Logger):
 
 
 def train_a2c(
-    qwerty_score,
-    env,
-    policy_network,
+    qwerty_score: float,
+    env: KeyboardLayout,
+    policy_network: nn.Module,
     policy_optimizer,
-    data,
-    episodes,
-    max_steps,
-    discount_factor,
+    data: np.ndarray,
+    episodes: int,
+    max_steps: int,
+    discount_factor: float,
+    logger: Logger,
 ):
+    """Train using Actor-Critic
+
+    Args:
+        qwerty_score (float): QWERTY layout score
+        env (KeyboardLayout): initial environment
+        policy_network (nn.Module): policy NN
+        policy_optimizer (any): optimizer for policy NN
+        data (np.ndarray): dataset to evaluate layouts
+        episodes (int): number of episodes to train
+        max_steps (int): max number of steps to lay
+        discount_factor (float): discount factor
+        logger (Logger): logger instance
+
+    Returns:
+        tuple[list[list[float]], float, KeyboardLayout]: (scores, best score, best keyboard layout)
+    """
     solved_score = qwerty_score * 0.5
 
     best_score = qwerty_score
     best_keyboard = env
-    # log scores
+
     scores = []
 
-    for episode in tqdm(range(episodes)):
+    loop = range(episodes)
+    if logger.verbose:
+        loop = tqdm(loop)
+        loop.set_description("fTraining episodes")
+
+    for episode in loop:
         state = KeyboardLayout(
             QWERTY_ENCODED_LOW, QWERTY_ENCODED_HIGH, Logger(verbose=False)
         )
@@ -150,6 +182,8 @@ def train_a2c(
 
         if best_score <= solved_score:
             break
+
+    logger.log("Success!\n")
     return scores, best_score, best_keyboard
 
 
@@ -172,16 +206,25 @@ def save_best_layout_info(
 
 
 def save_scores_plot(
-    scores: torch.Tensor,
+    scores: list[list[float]],
     save_path: str,
     best_score: float,
     logger: Logger,
     figsize: tuple[int, int] = (16, 9),
 ):
+    """Save figure of layout scores
+
+    Args:
+        scores (list[list[float]): layout scores
+        save_path (str): path to save figure
+        best_score (float): best layout score
+        logger (Logger): logger instance
+        figsize (tuple[int, int]): resulting figure sizes. Default to (16, 9)
+    """
     logger.log("Saving figure...")
 
-    best_scores = [min(x) for x in scores]
-    worst_scores = [max(x) for x in scores]
+    best_scores = [np.min(x) for x in scores]
+    worst_scores = [np.max(x) for x in scores]
     mean_scores = [np.mean(x) for x in scores]
     qwerty_scores = [x[0] for x in scores]
 
@@ -211,33 +254,39 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 class PolicyNetwork(nn.Module):
+    """Network to estimate actions of agent"""
+
     def __init__(self, observation_space: int, action_space: int, hidden_dim: int = 128):
         super(PolicyNetwork, self).__init__()
         self.input_layer = nn.Linear(observation_space, hidden_dim)
         self.output_layer = nn.Linear(hidden_dim, action_space)
 
     def forward(self, x):
+        """Forward pass
+
+        Args:
+            x (torch.tensor): input data
+
+        Returns:
+            torch.tensor: output data
+        """
         x = F.relu(self.input_layer(x))
         actions = self.output_layer(x)
         return F.softmax(actions, dim=0)
 
 
-class StateValueNetwork(nn.Module):
-    def __init__(self, observation_space: int, hidden_dim: int = 128):
-        super(StateValueNetwork, self).__init__()
-
-        self.input_layer = nn.Linear(observation_space, hidden_dim)
-        self.output_layer = nn.Linear(hidden_dim, 1)
-
-    def forward(self, x):
-        x = F.relu(self.input_layer(x))
-
-        return self.output_layer(x)
-
-
 def select_action(
     policy_network: nn.Module, layout: KeyboardLayout
 ) -> tuple[int, torch.Tensor]:
+    """Select action using policy NN
+
+    Args:
+        policy_network (nn.Module): policy NN
+        layout (KeyboardLayout): current state
+
+    Returns:
+        tuple[int, torch.Tensor]: (best action, action probabilities)
+    """
     state = layout.flatten().to(DEVICE)
     action_probabilities = policy_network(state)
 
@@ -248,6 +297,15 @@ def select_action(
 
 
 def estimate_layout(layout: KeyboardLayout, dataset: np.ndarray) -> torch.Tensor:
+    """Calculate score for given layout
+
+    Args:
+        layout (KeyboardLayout): layout to estimate
+        dataset (np.ndarray): data for layout estimation
+
+    Returns:
+        torch.Tensor: score for layout on data
+    """
     score = 0
     loop = dataset
     layout.reset()
@@ -383,6 +441,7 @@ def train():
         episodes,
         max_steps,
         discount_factor,
+        logger,
     )
 
     # Save policy network

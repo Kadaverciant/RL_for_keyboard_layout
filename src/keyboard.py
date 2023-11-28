@@ -150,7 +150,7 @@ def encode_decode_buttons(buttons: set[str]) -> tuple[dict[str, int], dict[int, 
 BUTTONS_SET = get_buttons_set(QWERTY_LOW_LAYOUT, QWERTY_HIGH_LAYOUT)
 KEYBOARD_LAYOUT_SHAPE = get_keyboard_shape(QWERTY_LOW_LAYOUT)
 KEYBOARD_LAYOUT_CUMSUM_SHAPE = np.cumsum(KEYBOARD_LAYOUT_SHAPE)
-KEYS_NUMBER = sum(KEYBOARD_LAYOUT_SHAPE) * 2
+KEYS_NUMBER: int = sum(KEYBOARD_LAYOUT_SHAPE) * 2
 
 
 def convert_int_to_coords(n: int) -> tuple[int, int, int]:
@@ -164,8 +164,8 @@ def convert_int_to_coords(n: int) -> tuple[int, int, int]:
     if n >= KEYS_NUMBER // 2:
         n -= KEYS_NUMBER // 2
         shift = 1
-    for i in range(len(KEYBOARD_LAYOUT_CUMSUM_SHAPE)):
-        if n < KEYBOARD_LAYOUT_CUMSUM_SHAPE[i]:
+    for i, el in enumerate(KEYBOARD_LAYOUT_CUMSUM_SHAPE):
+        if n < el:
             row = i
             break
     if row > 0:
@@ -339,17 +339,17 @@ class KeyboardLayout:
     ) -> dict[int, list[Position]]:
         layout_dict: dict[int, list[Position]] = {}
 
-        for i in range(len(layout)):
-            for j in range(len(layout[i])):
-                button = layout[i][j]
+        for i, row in enumerate(layout):
+            for j, element in enumerate(row):
+                button = element
                 if button in layout_dict:
                     layout_dict[button].append((i, j))
                 else:
                     layout_dict[button] = [(i, j)]
 
-        for i in range(len(unused_layout)):
-            for j in range(len(unused_layout[i])):
-                button = unused_layout[i][j]
+        for i, row in enumerate(unused_layout):
+            for j, element in enumerate(row):
+                button = element
                 if button not in layout_dict:
                     layout_dict[button] = []
 
@@ -411,7 +411,7 @@ class KeyboardLayout:
     ) -> tuple[tuple[int, Position], tuple[int, Position], float]:
         shift_positions = self.low_layout_dict[SHIFT_CODE]
         if len(shift_positions) == 0:
-            # print("ERROR SHIFT IS UNREACHABLE")
+            # ERROR: SHIFT IS UNREACHABLE
             return (0, (0, 0)), (0, (0, 0)), 9999
 
         # firstly reach SHIFT, then - positions
