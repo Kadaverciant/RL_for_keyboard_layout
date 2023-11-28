@@ -172,6 +172,24 @@ def estimate_layouts(
     return torch.as_tensor([layout.total_score for layout in layouts])
 
 
+""" Save functions """
+
+
+def save_best_layout_info(
+    best_keyboard: KeyboardLayout,
+    best_score: float,
+    save_path: str,
+    logger: Logger,
+):
+    logger.log("Saving data...")
+
+    lines = [str(best_score), "\n\n", best_keyboard.get_string_layouts()]
+    with open(save_path, "w") as f:
+        f.writelines(lines)
+
+    logger.log("Success!\n")
+
+
 def save_scores_plot(
     scores: torch.Tensor,
     qwerty_score: float,
@@ -201,7 +219,6 @@ def save_scores_plot(
     plt.ylabel("Score")
     plt.xlabel("Random layout #")
     plt.xlim([0, len(scores) - 1])
-    plt.xticks(points)
     plt.title("Scores for random layouts")
     plt.savefig(save_path)
     plt.close()
@@ -288,6 +305,19 @@ def compute_baseline():
 
     # Estimate random layouts
     layouts_scores = estimate_layouts(layouts, data, logger)
+
+    random_scores = [x.item() for x in layouts_scores]
+    best_layout_idx = np.argmin(random_scores)
+    best_keyboard = layouts[best_layout_idx]
+    best_score = random_scores[best_layout_idx]
+
+    # Save keyboard data
+    save_best_layout_info(
+        best_keyboard,
+        best_score,
+        os.path.join(save_path, f"baseline_best_{layouts_number}.txt"),
+        logger,
+    )
 
     # Save figures
     save_scores_plot(

@@ -237,7 +237,6 @@ def save_scores_plot(
     plt.legend()
     plt.grid()
     plt.xlim([0, len(scores) - 1])
-    plt.xticks(list(range(len(scores))))
     plt.ylim([best_score, 14000])
     plt.ylabel("Score")
     plt.xlabel("Episode")
